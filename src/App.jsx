@@ -1253,12 +1253,22 @@ function CartDrawer({ cart, ordered, onClose, onUpdate, onRemove, onPlaceOrder }
           </div>
           <div className="oconf">
             <div className="conf-ring">✓</div>
-            <div className="conf-title">Order Placed</div>
-            <p className="conf-sub">Your items are being prepared. Ready in just 5 minutes!</p>
+            <div className="conf-title">Order Sent!</div>
+            <p className="conf-sub">
+              Tumhara order <strong style={{ color:"#4ade80" }}>WhatsApp pe bhej diya gaya!</strong>
+              <br/>Ready in just 5 minutes.
+            </p>
             <div className="conf-id">Order #{orderIdRef.current}</div>
-            <p style={{ fontSize:13, color:"var(--t2)", marginTop:4 }}>
-              After 5 minutes — Order will{" "}
-              <span style={{ color:"#f87171", fontWeight:700 }}>NOT be cancelled</span> ❄
+            <p style={{ fontSize:13, color:"var(--t2)", marginTop:8, lineHeight:1.6 }}>
+              📱 WhatsApp nahi khula?<br/>
+              <a
+                href={"https://wa.me/917891520807"}
+                target="_blank"
+                rel="noreferrer"
+                style={{ color:"var(--im)", textDecoration:"none", fontWeight:600 }}
+              >
+                Yahan click karo → 7891520807
+              </a>
             </p>
             <button className="cnbtn" onClick={onClose}>Continue Browsing</button>
           </div>
@@ -1361,7 +1371,39 @@ export default function App() {
 
   const removeItem = (id) => setCart(p => p.filter(e => e.item.id !== id));
 
-  const placeOrder = () => { setOrdered(true); setCart([]); };
+  const placeOrder = () => {
+    if (cart.length === 0) return;
+
+    const orderNum = Math.floor(Math.random() * 9000 + 1000);
+    const now      = new Date();
+    const timeStr  = now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
+    const dateStr  = now.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+
+    const itemLines = cart
+      .map(e => "  " + e.qty + "x " + e.item.name + "  -  Rs" + e.item.price * e.qty)
+      .join("\n");
+
+    const subtotal = cart.reduce((s, e) => s + e.item.price * e.qty, 0);
+
+    const msg =
+      "🧊 *NEW ORDER — Ice Cube Junction*\n" +
+      "━━━━━━━━━━━━━━━━━━━━\n" +
+      "*Order #" + orderNum + "*\n" +
+      "🕐 " + timeStr + "  |  " + dateStr + "\n" +
+      "━━━━━━━━━━━━━━━━━━━━\n" +
+      itemLines + "\n" +
+      "━━━━━━━━━━━━━━━━━━━━\n" +
+      "*TOTAL:  Rs" + subtotal + "*\n" +
+      "━━━━━━━━━━━━━━━━━━━━\n" +
+      "⏱ Ready in 5 minutes!\n" +
+      "Sent from: icecube-junction.vercel.app";
+
+    const waUrl = "https://wa.me/917891520807?text=" + encodeURIComponent(msg);
+    window.open(waUrl, "_blank");
+
+    setOrdered(true);
+    setCart([]);
+  };
 
   const closeCart = () => {
     setCartOpen(false);
@@ -1515,18 +1557,18 @@ export default function App() {
               loading="lazy"
               allowFullScreen
               referrerPolicy="no-referrer-when-downgrade"
-              src="https://maps.google.com/maps?q=Mehandipur+Parli+Rajasthan+303509&output=embed"
+              src="https://maps.google.com/maps?q=Mehandipur+Balaji+Rajasthan+321613&output=embed"
             />
             <div className="branch-body">
               <div className="branch-badge second-b">❄ Second Branch</div>
               <div className="branch-name">Cafe by Ice Cube Junction</div>
               <div className="branch-addr">
-                Mehandipur, Parli,<br />
-                Rajasthan 303509
+                Mehandipur Balaji,<br />
+                Dausa, Rajasthan 321613
               </div>
               <div className="branch-links">
                 <a className="branch-link call" href="tel:7891520807">📞 7891520807</a>
-                <a className="branch-link" href="https://maps.google.com/?q=Mehandipur+Parli+Rajasthan+303509" target="_blank" rel="noreferrer">🗺 Directions</a>
+                <a className="branch-link" href="https://maps.google.com/?q=Mehandipur+Balaji+Rajasthan+321613" target="_blank" rel="noreferrer">🗺 Directions</a>
                 <a className="branch-link" href="https://wa.me/917891520807" target="_blank" rel="noreferrer">💬 WhatsApp</a>
               </div>
             </div>
@@ -1581,8 +1623,8 @@ export default function App() {
         <div className="ft-col">
           <h4>Second Branch</h4>
           <ul>
-            <li>📍 Mehandipur, Parli</li>
-            <li style={{ paddingLeft:20, marginTop:-4 }}>Rajasthan 303509</li>
+            <li>📍 Mehandipur Balaji</li>
+            <li style={{ paddingLeft:20, marginTop:-4 }}>Dausa, Rajasthan 321613</li>
             <li><a href="tel:7891520807" style={{ color:"inherit", textDecoration:"none" }}>📞 7891520807</a></li>
             <li>⏱ Ready in 5 Minutes</li>
             <li>✨ Waffle Cone Upgrade ₹10</li>
@@ -1590,7 +1632,7 @@ export default function App() {
           </ul>
         </div>
         <div className="ft-bot">
-          <span>© 2025 <span>Ice Cube Junction</span>. All rights reserved. · Jodhpura &amp; Parli, Rajasthan</span>
+          <span>© 2025 <span>Ice Cube Junction</span>. All rights reserved. · Jodhpura &amp; Mehandipur Balaji, Rajasthan</span>
           <span>AI Pairing by <span>Claude</span> · Digital billing ready</span>
         </div>
       </footer>
